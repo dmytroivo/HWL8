@@ -137,7 +137,7 @@ public class Run {
 				new FileOutputStream(group.getNameGroup() + ".grp"))) {
 			OOS.writeObject(group);
 		} catch (IOException e) {
-			System.out.println("ERROR save group !!!");
+			System.out.println("Ошибка сохранения файла "+group.getNameGroup()+".grp");
 		}
 	}
 	
