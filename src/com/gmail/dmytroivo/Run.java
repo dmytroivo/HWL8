@@ -15,14 +15,14 @@ public class Run {
 
 	private static Group group;
 	private static boolean runContinue = true;
-	private static File sFis;
+	private static File fileGroupTXT;
 
 	public static boolean isRunContinue() {
 		return runContinue;
 	}
 	
-    public static void InitSeriz() {
-			System.out.print("Введите имя группы:");
+    public static void loadGroupFromFileGRP() {
+			System.out.print("Введите имя группы (grp):");
 			Scanner sin = new Scanner(System.in);
 			String nameGroup = sin.nextLine();
 		try (ObjectInputStream OIS = new ObjectInputStream(new FileInputStream(
@@ -30,23 +30,22 @@ public class Run {
 			group = (Group) OIS.readObject();
 			group.setNameGroup(nameGroup);
 		} catch (IOException | ClassNotFoundException e) {
-			System.out.println("Файл *.grp не найден! Запущена иннициализация по умолчанию");
-			Run.Initializate();
+			System.out.println("Файл *.grp не найден!");
 		}
 		}
 
-	public static void Initializate() {
-		System.out.print("Введите имя группы:");
+	public static void loadGroupFromFileTXT() {
+		System.out.print("Введите имя группы (txt):");
 		Scanner sin = new Scanner(System.in);
 		String nameGroup = sin.nextLine();
 		group = new Group(nameGroup);
-		sFis = new File(group.getNameGroup() + ".txt");
-		if (sFis.exists()) {
-			try (BufferedReader f = new BufferedReader(new FileReader(sFis))) {
+		fileGroupTXT = new File(group.getNameGroup() + ".txt");
+		if (fileGroupTXT.exists()) {
+			try (BufferedReader bufReadFile = new BufferedReader(new FileReader(fileGroupTXT))) {
 				String[] astr = new String[9];
 				String line=new String("");
 				for (int i =0;line!=null;i++){
-					line=f.readLine();
+					line=bufReadFile.readLine();
 					if(line!=null){
 					astr = line.split("\\|");
 					group.loadStudent(astr[1].trim(),
@@ -65,39 +64,44 @@ public class Run {
 	}
 
 	
-	public static void stxt(){
+	public static void saveGroupAsTXT() throws NotLoadGroupException{
+		if(group==null) throw new NotLoadGroupException();
 		try {
-			if (!sFis.exists()) {
-				sFis.createNewFile();
+			if (!fileGroupTXT.exists()) {
+				fileGroupTXT.createNewFile();
 			}
 		} catch (IOException e) {
 			System.out.println("Error create file");
 		}
-		try (PrintWriter pw=new PrintWriter(sFis)){
-		pw.write(group.toString());
-		pw.flush();
+		try (PrintWriter printwr=new PrintWriter(fileGroupTXT)){
+		printwr.write(group.toString());
+		printwr.flush();
 		} catch (IOException e) {
 			System.out.println(e);
 		}
 	}
 
-	public static void del() {
+	public static void delStudFromGroup() throws NotLoadGroupException {
+		if(group==null) throw new NotLoadGroupException();	
 		System.out.print("Введите номер зачетки, для удаления студента из группы:");
 		Scanner sin = new Scanner(System.in);
 		group.delStudent(sin.nextInt());
 	}
 
-	public static void find() {
+	public static void findStudFromGroup() throws NotLoadGroupException{
+		if(group==null) throw new NotLoadGroupException();	
 		System.out.print("Введите Фимилию стутдента:");
 		Scanner sin = new Scanner(System.in);
 		System.out.println(group.findStudent(sin.nextLine()));
 	}
 
-	public static void sort() {
+	public static void sortStudFromGroup() throws NotLoadGroupException{
+		if(group==null) throw new NotLoadGroupException();
 		group.sortGroup();
 	}
 
-	public static void print() {
+	public static void printAllStudFromGroup() throws NotLoadGroupException{
+		if(group==null) throw new NotLoadGroupException();
 		System.out.println(group);
 	}
 
@@ -106,33 +110,31 @@ public class Run {
 		Run.runContinue = false;
 	}
 
-	public static void help() {
+	public static void printListCommands() {
 		System.out.println("Команды программы:\n"
-				+ "print - вывод группы на экран\n"
-				+ "otxt  - открыть файл группы *.txt\n"
-				+ "stxt  - сохранить файл группы *.txt\n"
-				+ "add   - добавление стутдента в группу\n"
-				+ "del   - удаление студента из группы"
-				+ "find  - поиск студента в группе\n"
-				+ "sort  - сортировка группы по фамилии\n"
-				+ "help  - вывод допустимых команд\n"
-				+ "ogrp  - открыть файл группы *.grp\n"
-				+ "sgrp  - сохранить файл группы *.grp\n"
+				+ "=== экран ===\n"
+				+ "print - вывод на экран студентов группы\n"
 				+ "txt   - вывод на экран файлов *.txt\n"
 				+ "grp   - вывод на экран файлов *.grp\n"
 				+ "tree  - вывод на экран структуры папки с проэктом\n"
-				+ "exit  - выход\n");
+				+ "=== файлы ===\n"
+				+ "otxt  - открыть файл группы *.txt\n"
+				+ "stxt  - сохранить файл группы *.txt\n"
+				+ "ogrp  - открыть файл группы *.grp\n"
+				+ "sgrp  - сохранить файл группы *.grp\n"
+				+ "=== группа ===\n"
+				+ "add   - добавление стутдента в группу\n"
+				+ "del   - удаление студента из группы\n"
+				+ "find  - поиск студента в группе\n"
+				+ "sort  - сортировка группы по фамилии\n"
+				+ "=== программа ===\n"
+				+ "help  - вывод допустимых команд\n"
+				+ "exit  - выход\n"
+				);
 	}
 	
-	public static void otxt() {
-		Run.Initializate();	
-	}
-	// новые команды
-	public static void ogrp() {
-		Run.InitSeriz();
-	}
-	
-	public static void sgrp() {
+	public static void saveGroupAsGRP() throws NotLoadGroupException{
+		if(group==null) throw new NotLoadGroupException();
 		try (ObjectOutputStream OOS = new ObjectOutputStream(
 				new FileOutputStream(group.getNameGroup() + ".grp"))) {
 			OOS.writeObject(group);
@@ -143,18 +145,21 @@ public class Run {
 	
 	public static void tree() {
 		File folder = new File(System.getProperty("user.dir"));
+		//TODO
+		//System.out.println("Введите путь к дериктории для посторения дерева:");
 		Run.printtree(folder," ",true);
 	}
 	
-	public static void txt() {
-		Run.printFile("txt");
+	public static void printAvailableFilesTXT() {
+		Run.printFilesByEXT("txt");
 	}
 	
-	public static void grp() {
-		Run.printFile("grp");
+	public static void printAvailableFilesGRP() {
+		Run.printFilesByEXT("grp");
 	}
 	
-	public static void add(){
+	public static void addStudIntoGroup() throws NotLoadGroupException{
+	if(group==null) throw new NotLoadGroupException();
 	Scanner sin=new Scanner(System.in);
 	System.out.println("Ведите Фамилию стутдента:");
 	String s=sin.nextLine();
@@ -169,7 +174,7 @@ public class Run {
 	group.addStudent(new Student(s,n,p,sx.equals("1")?true:false,d));
 	}
 	
-	private static void printFile(String ext) {
+	private static void printFilesByEXT(String ext) {
 		File folder = new File(System.getProperty("user.dir"));
 		System.out.println(folder.getName() + ":");
 		boolean f=false;

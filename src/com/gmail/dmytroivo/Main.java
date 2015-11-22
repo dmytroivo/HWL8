@@ -6,51 +6,52 @@ public class Main {
 
 	public static void main(String[] args){
 		// TODO Auto-generated method stub
-		Run.help();
+		Run.printListCommands();
 		Scanner sin = new Scanner(System.in);
 		System.out.print("Открыть группу \nиз файла txt или grp? (1-txt 2-grp):");
-		String load=sin.nextLine();
-		if (load.equals("1")) {
-			Run.Initializate();
-		} else if (load.equals("2")) {
-			Run.InitSeriz();
+		String firstCommandToStart=sin.nextLine();
+		if (firstCommandToStart.equals("1")) {
+			Run.loadGroupFromFileTXT();
+		} else if (firstCommandToStart.equals("2")) {
+			Run.loadGroupFromFileGRP();
 		} else {
-		System.out.println("Ошибка выбора, инициализирована команда \"otxt\"");
+		System.out.println("Корректный выбор не сделан, группа не загружена");
 		}
 		String command = "";
 		do {
 			System.out.print("Введите команду: ");
 			command = sin.nextLine();
+			try{
 			switch (command) {
 			case "print":
-				Run.print();
+				Run.printAllStudFromGroup();
 				break;
 			case "stxt":
-				Run.stxt();
+				Run.saveGroupAsTXT();
 				break;
 			case "otxt":
-				Run.otxt();
+				Run.loadGroupFromFileTXT();
 				break;
 			case "add":
-				Run.add();
+				Run.addStudIntoGroup();
 				break;
 			case "del":
-				Run.del();
+				Run.delStudFromGroup();
 				break;
 			case "find":
-				Run.find();
+				Run.findStudFromGroup();
 				break;
 			case "sort":
-				Run.sort();
+				Run.sortStudFromGroup();
 				break;
 			case "help":
-				Run.help();
+				Run.printListCommands();
 				break;
 			case "txt":
-				Run.txt();
+				Run.printAvailableFilesTXT();
 				break;
 			case "grp":
-				Run.grp();
+				Run.printAvailableFilesGRP();
 				break;	
 			case "tree":
 				Run.tree();
@@ -59,13 +60,16 @@ public class Main {
 				Run.exit();
 				break;
 			case "ogrp":
-				Run.ogrp();
+				Run.loadGroupFromFileGRP();
 				break;
 			case "sgrp":
-				Run.sgrp();
+				Run.saveGroupAsGRP();
 				break;
 			default:
 				break;
+			}
+			} catch (NotLoadGroupException e){
+				System.out.println(e);
 			}
 		}
 		while (Run.isRunContinue());

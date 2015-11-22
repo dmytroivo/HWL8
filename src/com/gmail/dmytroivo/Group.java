@@ -27,7 +27,7 @@ public class Group implements Serializable  {
 		aStudents[countStudent].setPatronymic(p);
 		aStudents[countStudent].setSex(sx);
 		aStudents[countStudent].setBirthDate(bd);
-		aStudents[countStudent].setSrb(srb);
+		aStudents[countStudent].setStudRecBook(srb);
 		aStudents[countStudent].setAvgRating(avg);
 		countStudent++;
 		countaddStudent++;
@@ -54,7 +54,7 @@ public class Group implements Serializable  {
 			if (s.getGroup().equals("абитуриент")) {
 				aStudents[countStudent]=s;
 				aStudents[countStudent].setGroup(nameGroup);
-				aStudents[countStudent++].setSrb(Integer.parseInt("777"+countaddStudent++));
+				aStudents[countStudent++].setStudRecBook(Integer.parseInt("777"+countaddStudent++));
 			} else {
 				}
 		} catch (OverflowGroupException e) {
@@ -68,7 +68,7 @@ public class Group implements Serializable  {
 				throw new NullGroupException();
 			} else {
 				for (int i=0;i<countStudent;i++) {
-					if (aStudents[i].getSrb()==srb) {
+					if (aStudents[i].getStudRecBook()==srb) {
 						aStudents[i].setGroup("абитуриент");
 						for (; i < countStudent - 1; i++) {
 							aStudents[i] = aStudents[i + 1];
